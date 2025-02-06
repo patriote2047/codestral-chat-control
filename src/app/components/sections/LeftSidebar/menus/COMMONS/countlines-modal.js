@@ -3,12 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Modal.module.css';
 
-export default function CountLinesModal({ 
-    isOpen, 
-    onClose, 
-    title,
-    scriptName
-}) {
+export default function CountLinesModal({ isOpen, onClose, title, scriptName }) {
     const [error, setError] = useState('');
     const [output, setOutput] = useState('');
     const [filePath, setFilePath] = useState('');
@@ -75,32 +70,32 @@ export default function CountLinesModal({
                 },
                 body: JSON.stringify({
                     script: scriptName,
-                    args: [filePath]
+                    args: [filePath],
                 }),
             });
 
             if (!response.ok) {
-                throw new Error('Erreur lors de l\'exécution du script');
+                throw new Error("Erreur lors de l'exécution du script");
             }
 
             const data = await response.json();
             setOutput(data.output);
         } catch (err) {
-            setError('Erreur lors de l\'exécution du script count-lines.mjs');
+            setError("Erreur lors de l'exécution du script count-lines.mjs");
         } finally {
             setIsProcessing(false);
         }
     };
 
-    const filteredFiles = fileList.filter(file => 
+    const filteredFiles = fileList.filter((file) =>
         file.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (!isOpen) return null;
 
     return (
-        <div 
-            className={styles.modalOverlay} 
+        <div
+            className={styles.modalOverlay}
             onClick={(e) => {
                 if (e.target === e.currentTarget && !isProcessing) {
                     onClose();
@@ -110,7 +105,7 @@ export default function CountLinesModal({
             <div className={`${styles.modal} ${styles.medium}`}>
                 <div className={styles.modalHeader}>
                     <h3>{title}</h3>
-                    <button 
+                    <button
                         onClick={() => !isProcessing && onClose()}
                         className={styles.closeButton}
                         disabled={isProcessing}
@@ -123,14 +118,13 @@ export default function CountLinesModal({
                         <div className={styles.explanation}>
                             <h4>À propos de cet outil</h4>
                             <p>
-                                Le compteur de lignes vous permet de compter le nombre de lignes dans n&apos;importe quel fichier du projet.
+                                Le compteur de lignes vous permet de compter le nombre de lignes
+                                dans n&apos;importe quel fichier du projet.
                             </p>
-                            <p>
-                                Pour utiliser l&apos;outil :
-                            </p>
+                            <p>Pour utiliser l&apos;outil :</p>
                             <ol>
                                 <li>Recherchez et sélectionnez un fichier dans la liste</li>
-                                <li>Cliquez sur "Compter" pour obtenir le nombre de lignes</li>
+                                <li>&quot;Compter&quot; pour obtenir le nombre de lignes</li>
                             </ol>
                         </div>
 
@@ -151,7 +145,7 @@ export default function CountLinesModal({
 
                             <div className={styles.fileList}>
                                 {filteredFiles.map((file, index) => (
-                                    <div 
+                                    <div
                                         key={index}
                                         className={`${styles.fileItem} ${filePath === file ? styles.selected : ''}`}
                                         onClick={() => setFilePath(file)}
@@ -161,11 +155,7 @@ export default function CountLinesModal({
                                 ))}
                             </div>
 
-                            {error && (
-                                <div className={styles.error}>
-                                    {error}
-                                </div>
-                            )}
+                            {error && <div className={styles.error}>{error}</div>}
 
                             {output && (
                                 <div className={styles.scriptOutput}>
@@ -173,7 +163,7 @@ export default function CountLinesModal({
                                 </div>
                             )}
 
-                            <button 
+                            <button
                                 type="submit"
                                 className={styles.modalButton}
                                 disabled={isProcessing}
@@ -186,4 +176,4 @@ export default function CountLinesModal({
             </div>
         </div>
     );
-} 
+}

@@ -1,15 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styles from './Modal.module.css';
 
-export default function ShowTimeModal({ 
-    isOpen, 
-    onClose, 
-    title,
-    command,
-    scriptName
-}) {
+export default function ShowTimeModal({ isOpen, onClose, title, command, scriptName }) {
     const [error, setError] = useState('');
     const [output, setOutput] = useState('');
     const [isRunning, setIsRunning] = useState(false);
@@ -25,34 +19,26 @@ export default function ShowTimeModal({
         }
     }, [isOpen]);
 
-    const handleCommandClick = async () => {
+    const handleCommandClick = useCallback(async () => {
         setError('');
         setOutput('');
 
         try {
             setIsRunning(true);
-            
-            // Utiliser les options correctes pour le script
-            const args = [];
-            if (command.command === '--short') {
-                args.push('--short');  // Format court
-            } else if (command.command === '--seconds') {
-                args.push('--seconds');  // Format avec secondes
-            }
-            
+
             const response = await fetch('/api/run-script', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    script: 'COMMONS/show-time.mjs',
-                    args: args
+                    script: scriptName,
+                    args: command?.args || [],
                 }),
             });
 
             if (!response.ok) {
-                throw new Error('Erreur lors de l\'exécution du script');
+                throw new Error("Erreur lors de l'exécution du script");
             }
 
             const data = await response.json();
@@ -62,12 +48,11 @@ export default function ShowTimeModal({
 
             setOutput(data.output);
             setIsRunning(false);
-
         } catch (error) {
             setError(error.message);
             setIsRunning(false);
         }
-    };
+    }, [command?.args, scriptName]);
 
     // Exécuter la commande au montage de la modal
     useEffect(() => {
@@ -88,8 +73,8 @@ export default function ShowTimeModal({
     if (!isOpen) return null;
 
     return (
-        <div 
-            className={styles.modalOverlay} 
+        <div
+            className={styles.modalOverlay}
             onClick={(e) => {
                 if (e.target === e.currentTarget && !isRunning) {
                     onClose();
@@ -99,7 +84,7 @@ export default function ShowTimeModal({
             <div className={`${styles.modal} ${styles.medium}`}>
                 <div className={styles.modalHeader}>
                     <h3>{title}</h3>
-                    <button 
+                    <button
                         onClick={() => !isRunning && onClose()}
                         className={styles.closeButton}
                         disabled={isRunning}
@@ -113,11 +98,7 @@ export default function ShowTimeModal({
                             <p>{command?.description}</p>
                         </div>
 
-                        {error && (
-                            <div className={styles.error}>
-                                {error}
-                            </div>
-                        )}
+                        {error && <div className={styles.error}>{error}</div>}
 
                         {output && (
                             <div className={styles.scriptOutput}>
@@ -125,7 +106,7 @@ export default function ShowTimeModal({
                             </div>
                         )}
 
-                        <button 
+                        <button
                             onClick={handleCommandClick}
                             className={styles.modalButton}
                             disabled={isRunning}
@@ -137,4 +118,4 @@ export default function ShowTimeModal({
             </div>
         </div>
     );
-} 
+}
