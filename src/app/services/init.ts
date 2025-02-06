@@ -19,9 +19,9 @@ export async function initializeServices() {
         isInitialized = true;
         console.log('Services initialisés avec succès');
     } catch (error) {
-        console.error("Erreur lors de l'initialisation des services:", error);
+        console.error('Erreur lors de l\'initialisation des services:', error);
     }
 }
 
 // Initialiser au démarrage de l'application
-initializeServices();
+initializeServices(); 

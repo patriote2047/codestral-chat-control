@@ -8,7 +8,7 @@ interface Message {
     timestamp: number;
     type?: string;
     sender?: string;
-    socket?: string; // ID du socket pour les réponses ciblées
+    socket?: string;  // ID du socket pour les réponses ciblées
 }
 
 export class ModelHandler extends EventEmitter {
@@ -47,54 +47,46 @@ export class ModelHandler extends EventEmitter {
                 this.addToContext({
                     role: 'user',
                     content: message.text,
-                    timestamp: message.timestamp,
+                    timestamp: message.timestamp
                 });
 
                 // Indiquer que le traitement commence
-                this.sendResponse(
-                    {
-                        id: message.id,
-                        text: '...',
-                        sender: 'assistant',
-                        status: 'typing',
-                        timestamp: Date.now(),
-                    },
-                    message.socket
-                );
+                this.sendResponse({
+                    id: message.id,
+                    text: "...",
+                    sender: 'assistant',
+                    status: 'typing',
+                    timestamp: Date.now()
+                }, message.socket);
 
                 // Traiter le message et obtenir la réponse
                 const response = await this.processMessage(message);
 
                 // Émettre la réponse finale
-                this.sendResponse(
-                    {
-                        id: message.id,
-                        text: response,
-                        sender: 'assistant',
-                        status: 'completed',
-                        timestamp: Date.now(),
-                    },
-                    message.socket
-                );
+                this.sendResponse({
+                    id: message.id,
+                    text: response,
+                    sender: 'assistant',
+                    status: 'completed',
+                    timestamp: Date.now()
+                }, message.socket);
 
                 // Ajouter la réponse au contexte
                 this.addToContext({
                     role: 'assistant',
                     content: response,
-                    timestamp: Date.now(),
+                    timestamp: Date.now()
                 });
+
             } catch (error: any) {
                 console.error('Erreur lors du traitement par le modèle:', error);
-                this.sendResponse(
-                    {
-                        id: message.id,
-                        text: 'Désolé, une erreur est survenue lors du traitement de votre message.',
-                        sender: 'system',
-                        error: true,
-                        timestamp: Date.now(),
-                    },
-                    message.socket
-                );
+                this.sendResponse({
+                    id: message.id,
+                    text: "Désolé, une erreur est survenue lors du traitement de votre message.",
+                    sender: 'system',
+                    error: true,
+                    timestamp: Date.now()
+                }, message.socket);
             } finally {
                 this.processingMessages.delete(message.id);
             }
@@ -114,7 +106,7 @@ export class ModelHandler extends EventEmitter {
     private async processMessage(message: Message): Promise<string> {
         try {
             // Simuler un délai de traitement pour plus de naturel
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             // Utiliser le système de réponses
             const { findResponse } = require('./responses');
@@ -145,4 +137,4 @@ export class ModelHandler extends EventEmitter {
     clearContext() {
         this.context = [];
     }
-}
+} 

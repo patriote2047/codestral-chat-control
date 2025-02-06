@@ -1,24 +1,19 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import React from 'react';
 import styles from './Main.module.css';
+import Preview from './preview/Preview';
+import ChatComponent from '../Codestral/ChatComponent';
 
-const ChatComponent = dynamic(() => import('../Codestral/ChatComponent'), {
-    ssr: false,
-});
-
-const Main = () => {
+export default function Main() {
     return (
         <main className={styles.main}>
             <div className={styles.contentWrapper}>
-                <section className={styles.chatSection}>
-                    <div className={styles.chatWrapper}>
-                        <ChatComponent />
-                    </div>
-                </section>
+                <div className={styles.chatContainer}>
+                    <ChatComponent />
+                </div>
+                <Preview />
             </div>
         </main>
     );
-};
-
-export default Main;
+}

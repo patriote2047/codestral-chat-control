@@ -6,7 +6,7 @@ const CORS_HEADERS = {
     'Access-Control-Allow-Origin': 'http://localhost:3000',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Credentials': 'true'
 };
 
 // Route GET pour vérifier le statut du serveur WebSocket
@@ -21,11 +21,11 @@ export async function GET(req: NextRequest) {
                 status: currentStatus,
                 port: 3001,
                 clientsCount: wsService.getConnectedClients(),
-                state: currentStatus,
+                state: currentStatus
             }),
             {
                 status: currentStatus === 'error' ? 500 : 200,
-                headers: CORS_HEADERS,
+                headers: CORS_HEADERS
             }
         );
     } catch (error: unknown) {
@@ -35,11 +35,11 @@ export async function GET(req: NextRequest) {
             JSON.stringify({
                 status: 'Error checking WebSocket status',
                 error: errorMessage,
-                state: 'error',
+                state: 'error'
             }),
-            {
+            { 
                 status: 500,
-                headers: CORS_HEADERS,
+                headers: CORS_HEADERS
             }
         );
     }
@@ -52,28 +52,34 @@ export async function POST(req: NextRequest) {
         const wsService = WebSocketService.getInstance();
 
         if (!wsService.isRunning()) {
-            return new Response(JSON.stringify({ error: 'WebSocket server not initialized' }), {
-                status: 503,
-                headers: CORS_HEADERS,
-            });
+            return new Response(
+                JSON.stringify({ error: 'WebSocket server not initialized' }),
+                {
+                    status: 503,
+                    headers: CORS_HEADERS
+                }
+            );
         }
 
         // Broadcast le message à tous les clients connectés
         wsService.broadcast('chat_message', data);
 
-        return new Response(JSON.stringify({ success: true }), {
-            status: 200,
-            headers: CORS_HEADERS,
-        });
+        return new Response(
+            JSON.stringify({ success: true }),
+            {
+                status: 200,
+                headers: CORS_HEADERS
+            }
+        );
     } catch (error) {
         return new Response(
             JSON.stringify({
                 error: 'Failed to process message',
-                details: error instanceof Error ? error.message : 'Unknown error',
+                details: error instanceof Error ? error.message : 'Unknown error'
             }),
             {
                 status: 500,
-                headers: CORS_HEADERS,
+                headers: CORS_HEADERS
             }
         );
     }
@@ -83,6 +89,6 @@ export async function POST(req: NextRequest) {
 export async function OPTIONS(req: NextRequest) {
     return new Response(null, {
         status: 204,
-        headers: CORS_HEADERS,
+        headers: CORS_HEADERS
     });
 }
